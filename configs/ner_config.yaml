@@ -1,0 +1,46 @@
+# configs/ner_config.yaml
+ner:
+  # Model configuration - Updated for transformer model
+  model_type: "spacy"
+  model_name: "en_core_web_trf"  # spaCy transformer model (highest accuracy)
+
+  # Alternative models:
+  # model_name: "en_core_web_sm"   # Small model (fastest)
+  # model_name: "en_core_web_md"   # Medium model
+  # model_name: "en_core_web_lg"   # Large model
+
+  # Entity types relevant for affiliations
+  entity_types:
+    - "ORG"      # Organizations (IBM, University of California, etc.)
+    - "GPE"      # Geopolitical entities (USA, California, San Diego, etc.)
+    - "LOC"      # Locations
+    - "FAC"      # Facilities (Research Center, etc.)
+    - "PERSON"   # People names (if any)
+    - "CARDINAL" # Numbers (might catch addresses)
+
+  # Processing parameters
+  batch_size: 100
+  min_confidence: 0.7  # Higher threshold for affiliations
+
+  # Post-processing options
+  deduplicate: true
+  filter_low_confidence: false  # Keep for analysis
+  categorize_components: true   # Specific for affiliations
+
+  # Output configuration
+  output_format: "json"
+  save_intermediate: true
+
+# Data configuration - Updated for your dataset structure
+data:
+  input_path: "data/raw/"
+  output_path: "data/processed/"
+  affiliation_column: "affil1"  # Column with affiliation strings
+  id_column: "id1"              # ID column
+
+# Logging
+logging:
+  level: "INFO"
+  log_file: "logs/ner_extraction.log"
+
+---
