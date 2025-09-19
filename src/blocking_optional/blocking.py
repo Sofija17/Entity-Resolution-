@@ -1,146 +1,169 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Learning/embedding-based blocking:
+- Embed with TF-IDF
+- Retrieve top-K neighbors via ANN (HNSW if available, else exact cosine kNN)
+- Output candidate pairs restricted to those neighbors
+- ALSO write a *mapped* CSV with src_text and cand_text for inspection
+"""
 import re
-import itertools
-from collections import defaultdict
-from typing import List, Tuple, Dict, Set
-
+from pathlib import Path
+from typing import Tuple, List, Optional
+import numpy as np
 import pandas as pd
 
-# --- helpers ---------------------------------------------------------------
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
 
-def parse_labeled_tokens(s: str) -> List[Tuple[str, str]]:
+try:
+    import hnswlib
+    HNSW_AVAILABLE = True
+except Exception:
+    HNSW_AVAILABLE = False
+
+ALNUM = re.compile(r"[A-Za-z0-9]+")
+
+# ----------------------------- HELPERS ---------------------------------
+def detect_cols(df: pd.DataFrame) -> Tuple[str, str]:
+    text_candidates = [c for c in df.columns if c.lower() in
+                       ("affil1","affiliation","affil","text","affil_clean","affiliation_text","name")]
+    id_candidates   = [c for c in df.columns if c.lower() in
+                       ("id1","id","record_id","row_id")]
+    text_col = text_candidates[0] if text_candidates else df.columns[0]
+    id_col   = id_candidates[0]   if id_candidates   else (df.columns[1] if len(df.columns)>1 else df.columns[0])
+    return text_col, id_col
+
+def build_tfidf(texts: List[str], ngram_min=1, ngram_max=2, min_df=2, max_df=0.9):
+    vec = TfidfVectorizer(
+        analyzer="word",
+        ngram_range=(ngram_min, ngram_max),
+        min_df=min_df, max_df=max_df,
+        strip_accents="unicode",
+        lowercase=True,
+        sublinear_tf=True,
+    )
+    X = vec.fit_transform(texts)
+    return X, vec
+
+def ann_knn(X, k: int, backend: str = "auto", ef: int = 200, M: int = 32):
     """
-    Parse 'text<LABEL>; other<L2>' -> [(text, LABEL), ...]
+    Returns (indices, similarities, backend_used) with shape (N, k+1), including self at [:,0].
     """
-    if not isinstance(s, str) or not s.strip():
-        return []
-    parts = [p.strip() for p in s.split(";") if p.strip()]
-    out = []
-    for p in parts:
-        m = re.match(r"^(.*)<([^<>]+)>$", p)
-        if m:
-            text = m.group(1).strip().rstrip(",:;")
-            label = m.group(2).strip()
-            if text:
-                out.append((text, label))
-    return out
+    N = X.shape[0]
+    k_eff = min(k, N-1)
 
-_alnum = re.compile(r"[A-Za-z0-9]+")
+    if backend == "auto":
+        backend = "hnsw" if HNSW_AVAILABLE and X.shape[1] <= 1000 else "sklearn"
 
-def normalize_head(text: str) -> str:
-    # first alphanumeric token lowercased
-    m = _alnum.search(text)
-    return m.group(0).lower() if m else text.lower()
+    if backend == "hnsw":
+        dense = X.astype(np.float32).toarray()
+        dim = dense.shape[1]
+        index = hnswlib.Index(space="cosine", dim=dim)
+        index.init_index(max_elements=N, ef_construction=ef, M=M)
+        index.add_items(dense, np.arange(N, dtype=np.int32))
+        index.set_ef(max(ef, k_eff*2))
+        labels, dists = index.knn_query(dense, k=k_eff+1)
+        sims = 1.0 - dists
+        return labels, sims, "hnsw"
 
-def trigram(text: str) -> str:
-    t = re.sub(r"[^A-Za-z0-9]", "", text).lower()
-    return t[:3] if len(t) >= 3 else t
+    # sklearn fallback (exact)
+    knn = NearestNeighbors(n_neighbors=k_eff+1, metric="cosine", algorithm="brute")
+    knn.fit(X)
+    dists, idx = knn.kneighbors(X, return_distance=True)
+    sims = 1.0 - dists
+    return idx, sims, "sklearn"
 
-def is_two_letter_state(tok: str) -> bool:
-    return len(tok) == 2 and tok.isupper()
-
-def looks_like_zip(tok: str) -> bool:
-    return bool(re.fullmatch(r"\d{4,6}", tok))
-
-def org_acronym(text: str) -> str:
-    # initials of alnum words, keep common symbols like & if present (AT&T)
-    words = re.findall(r"[A-Za-z0-9]+|&", text)
-    # build acronym from uppercase initials or & when present
-    letters = []
-    for w in words:
-        if w == "&":
-            letters.append("&")
-        elif w.isalpha():
-            letters.append(w[0].upper())
-        elif w.isdigit():
-            letters.append(w[0])
-    ac = "".join(letters)
-    # prefer original known acronyms if text itself is all-caps short
-    if text.strip().upper() == text.strip() and len(text.strip()) <= 6:
-        return text.strip().upper()
-    return ac
-
-def pairs_from_ids(ids: List[int]) -> Set[Tuple[int, int]]:
-    out = set()
-    for a, b in itertools.combinations(sorted(ids), 2):
-        out.add((a, b))
-    return out
-
-# --- blocking --------------------------------------------------------------
-
-def build_blocks(df: pd.DataFrame) -> Dict[str, Set[int]]:
+def build_candidates(ids: List, neigh_idx: np.ndarray, sims: np.ndarray, k: int,
+                     undirected: bool = False, min_sim: Optional[float] = None) -> pd.DataFrame:
     """
-    Build multiple block keys -> set(id1) using typed tokens.
-    Returns a dict of {block_key: {id1,...}}
+    Build candidate pairs, excluding self. Optional min_sim to filter.
+    If undirected=True, collapse (a,b) and (b,a) to one row keeping max sim.
     """
-    blocks: Dict[str, Set[int]] = defaultdict(set)
+    N = len(ids)
+    rows = []
+    for i in range(N):
+        src = ids[i]
+        neighbors = neigh_idx[i, 1:k+1]
+        neigh_sims = sims[i, 1:k+1]
+        for j, s in zip(neighbors, neigh_sims):
+            if int(j) == i:
+                continue
+            if (min_sim is not None) and (s < min_sim):
+                continue
+            rows.append((src, ids[int(j)], float(s)))
 
-    for row in df.itertuples(index=False):
-        rid = int(getattr(row, "id1"))
-        labeled = parse_labeled_tokens(getattr(row, "affil_tokens_labeled", ""))
+    df = pd.DataFrame(rows, columns=["src_id","cand_id","cosine_sim"])
 
-        # split by label
-        orgs   = [t for t, lab in labeled if lab == "ORG"]
-        gpes   = [t for t, lab in labeled if lab == "GPE"]
-        cards  = [t for t, lab in labeled if lab == "CARDINAL"]
+    if undirected and not df.empty:
+        key = df.apply(lambda r: tuple(sorted((r["src_id"], r["cand_id"]))), axis=1)
+        df["pair_key"] = key
+        df = (df.sort_values("cosine_sim", ascending=False)
+                .groupby("pair_key", as_index=False)
+                .first()[["src_id","cand_id","cosine_sim"]])
+    return df
 
-        # --- Rule 1: ZIP / Postal (very tight)
-        for c in cards:
-            tok = c.strip()
-            if looks_like_zip(tok):
-                blocks[f"ZIP:{tok}"].add(rid)
+def enrich_with_text(cand_df: pd.DataFrame, df: pd.DataFrame, id_col: str, text_col: str) -> pd.DataFrame:
+    id_to_text = dict(zip(df[id_col], df[text_col]))
+    out = cand_df.copy()
+    out["src_text"]  = out["src_id"].map(id_to_text)
+    out["cand_text"] = out["cand_id"].map(id_to_text)
+    # nicer order
+    return out[["src_id","cand_id","cosine_sim","src_text","cand_text"]]
 
-        # --- Rule 2: GPE tokens (country/state/city)
-        for g in gpes:
-            tok = g.strip()
-            # city-like (>=3 chars)
-            if len(tok) >= 3 and not is_two_letter_state(tok):
-                blocks[f"CITY:{tok.lower()}"].add(rid)
-            # 2-letter states (US) — separate
-            if is_two_letter_state(tok):
-                blocks[f"STATE:{tok}"].add(rid)
-            # generic GPE catch-all
-            blocks[f"GPE:{tok.lower()}"].add(rid)
+# ----------------------------- RUNNER ----------------------------------
+def run_blocking(
+    csv_path: Path,
+    k: int = 20,                                # <<<<<<<<<<<<<<  set your chosen K here
+    out_csv: Optional[Path] = None,             # mapped CSV path (auto-named if None)
+    text_col: Optional[str] = None,
+    id_col: Optional[str]   = None,
+    backend: str = "auto",                      # "auto" | "sklearn" | "hnsw"
+    undirected: bool = False,
+    min_sim: Optional[float] = None,
+    ngram_min: int = 1,
+    ngram_max: int = 2,
+    min_df: int = 2,
+    max_df: float = 0.9,
+) -> Path:
+    df = pd.read_csv(csv_path)
+    if not text_col or text_col not in df.columns or (id_col and id_col not in df.columns):
+        auto_text, auto_id = detect_cols(df)
+        text_col = text_col if (text_col and text_col in df.columns) else auto_text
+        id_col   = id_col   if (id_col   and id_col   in df.columns) else auto_id
 
-        # --- Rule 3: Organization head / trigram / acronym
-        if orgs:
-            first_org = orgs[0]
-            head = normalize_head(first_org)
-            tg   = trigram(first_org)
-            ac   = org_acronym(first_org)
+    texts = df[text_col].fillna("").astype(str).tolist()
+    ids   = df[id_col].tolist()
 
-            if head:
-                blocks[f"ORGHEAD:{head}"].add(rid)
-            if tg:
-                blocks[f"ORG3:{tg}"].add(rid)
-            if ac:
-                blocks[f"ACR:{ac}"].add(rid)
+    X, _ = build_tfidf(texts, ngram_min, ngram_max, min_df, max_df)
+    neigh_idx, sims, used_backend = ann_knn(X, k, backend=backend)
+    print(f"[info] ANN backend: {used_backend}; N={X.shape[0]}, k={k}")
 
-    return blocks
+    cand_df = build_candidates(ids, neigh_idx, sims, k, undirected=undirected, min_sim=min_sim)
+    cand_df = (cand_df.sort_values(["src_id","cosine_sim"], ascending=[True, False])
+                        .groupby("src_id", as_index=False).head(k))
 
-def candidate_pairs_from_blocks(blocks: Dict[str, Set[int]],
-                                min_block_size: int = 2,
-                                max_block_size: int = 2000) -> Set[Tuple[int, int]]:
-    """
-    Turn blocks into a union of unique candidate pairs.
-    Skip trivial or huge blocks (safety).
-    """
-    candidates: Set[Tuple[int, int]] = set()
-    for key, ids in blocks.items():
-        n = len(ids)
-        if n < min_block_size or n > max_block_size:
-            continue
-        candidates |= pairs_from_ids(list(ids))
-    return candidates
+    mapped = enrich_with_text(cand_df, df, id_col=id_col, text_col=text_col)
 
-# Optional quick post-filter to keep only pairs sharing >=2 tokens (plain)
-def postfilter_by_token_overlap(df: pd.DataFrame,
-                                pairs: Set[Tuple[int, int]],
-                                min_overlap: int = 2) -> Set[Tuple[int, int]]:
-    by_id = {int(r.id1): set(str(r.affil_tokens).lower().split(";")) for r in df.itertuples(index=False)}
-    clean = set()
-    for a, b in pairs:
-        tok_a = {t.strip() for t in by_id.get(a, set()) if t.strip()}
-        tok_b = {t.strip() for t in by_id.get(b, set()) if t.strip()}
-        if len(tok_a & tok_b) >= min_overlap:
-            clean.add((a, b))
-    return clean
+    # choose output path
+    if out_csv is None:
+        out_csv = csv_path.parent / f"er_blocking_candidates_k{k}.csv"
+    mapped.to_csv(out_csv, index=False)
+    print(f"[saved] {out_csv} with {len(mapped):,} rows")
+    return out_csv
+
+# ----------------------------- CONFIG ----------------------------------
+if __name__ == "__main__":
+    # Set your paths and K here and just Run in PyCharm:
+    CSV = Path("../../data/affiliationstrings_ids_with_tokens.csv")   # adjust if needed
+    K   = 20                                                    # <<<<<<<<<<<<<< your chosen k
+    OUT = None  # or Path(f"data/er_blocking_candidates_k{K}.csv")
+
+    run_blocking(
+        csv_path=CSV,
+        k=K,
+        out_csv=OUT,
+        backend="auto",        # "auto" tries HNSW if available, else sklearn
+        undirected=False,      # set True to collapse (a,b) & (b,a)
+        min_sim=None           # e.g. 0.25 if you want a cosine floor
+    )

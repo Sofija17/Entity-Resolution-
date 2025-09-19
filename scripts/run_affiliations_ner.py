@@ -26,7 +26,7 @@ def process_csv_and_write_tokens(csv_path: str, model_type: str = "spacy", model
     # backoff: dslim/bert-base-NER (only when spaCy finds 0 entities)
     extractor = NERExtractor(
         model_type="spacy",
-        model_name="xx_ent_wiki_sm",
+        model_name="en_core_web_trf",
         transformers_backoff_model="dslim/bert-base-NER",
     )
 
