@@ -16,7 +16,7 @@ tm = train_pairwise_matcher(
     df=df,
     feature_cols=feature_cols,
     label_col="label",      # 1 for MATCH, 0 for NON-MATCH
-    model_name="logreg",    # or "rf", "xgb"
+    model_name="xgb",    # or "rf", "xgb"
     n_folds=5
 )
 
@@ -31,4 +31,4 @@ preds = tm.predict(df)                  # 0/1 using best threshold
 out = df[["src_id","cand_id"]].copy()
 out["prob_match"] = probs
 out["pred_match"] = preds
-out.to_csv("../data/classifier_predictions.csv", index=False)
+out.to_csv("../data/classifier_predictions_xgb.csv", index=False)

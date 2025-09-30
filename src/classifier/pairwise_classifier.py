@@ -285,7 +285,7 @@ def train_pairwise_matcher(
     df: pd.DataFrame,
     feature_cols: List[str],
     label_col: str = "label",
-    model_name: str = "logreg",
+    model_name: str = "xgb",
     n_folds: int = 5,
     random_state: int = 42
 ) -> TrainedMatcher:

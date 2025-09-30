@@ -1,4 +1,3 @@
-# models/ner/token_processor.py
 import logging
 from typing import List, Dict, Any
 import pandas as pd
@@ -9,7 +8,15 @@ logger = logging.getLogger(__name__)
 
 
 class TokenProcessor:
-    """Post-processing utilities for extracted tokens."""
+    """Post-processing слој кој од листа извлечени ентитети прави читливи token-string."""
+
+    @staticmethod
+    def _get_text(e: ExtractedEntity | Dict[str, Any]) -> str:
+        return (getattr(e, "text", None) or e.get("text") or "").strip()
+
+    @staticmethod
+    def _get_label(e: ExtractedEntity | Dict[str, Any]) -> str:
+        return (getattr(e, "label", None) or e.get("label") or "").strip()
 
     @staticmethod
     def to_tokens_string_labeled(entities: List[ExtractedEntity]) -> str:
@@ -20,8 +27,8 @@ class TokenProcessor:
         seen = set()
         out = []
         for e in entities:
-            text = (e.text or "").strip().rstrip(";:,")
-            label = (e.label or "").strip()
+            text = TokenProcessor._get_text(e).rstrip(";:,")
+            label = TokenProcessor._get_label(e)
             if not text:
                 continue
             key = (text.lower(), label)
@@ -37,7 +44,7 @@ class TokenProcessor:
         seen = set()
         out = []
         for e in entities:
-            text = (e.text or "").strip().rstrip(";:,")
+            text = TokenProcessor._get_text(e).rstrip(";:,")
             if not text:
                 continue
             key = text.lower()
@@ -54,7 +61,6 @@ class TokenProcessor:
           - id1
           - affil_tokens_labeled (e.g., 'IBM<ORG>; San Jose<GPE>')
           - affil_tokens (plain)
-          - total_entities
         """
         rows = []
         for item in results:
@@ -64,7 +70,6 @@ class TokenProcessor:
                     id_column: item["id"],
                     "affil_tokens_labeled": TokenProcessor.to_tokens_string_labeled(ents),
                     "affil_tokens": TokenProcessor.to_tokens_string_plain(ents),
-                    "total_entities": item.get("total_entities", len(ents)),
                 }
             )
         return pd.DataFrame(rows)
@@ -80,5 +85,10 @@ class TokenProcessor:
             merged = original_df.merge(tokens_df, on=id_column, how="left")
         else:
             tokens_df = tokens_df.rename(columns={id_column: "index"})
-            merged = original_df.reset_index().merge(tokens_df, on="index", how="left").drop(columns=["index"])
+            merged = (
+                original_df
+                .reset_index()
+                .merge(tokens_df, on="index", how="left")
+                .drop(columns=["index"])
+            )
         return merged

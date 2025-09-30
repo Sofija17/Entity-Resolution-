@@ -14,7 +14,7 @@ def build_match_graph(
     prob_col: str = "prob_match",
     u_col: str = "src_id",
     v_col: str = "cand_id",
-    keep_threshold: float = 0.7,
+    keep_threshold: float = 0.45,
 ) -> nx.Graph:
     """
     Turn classifier predictions into an undirected weighted graph.

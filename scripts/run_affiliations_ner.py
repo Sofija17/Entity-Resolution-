@@ -1,55 +1,58 @@
-# scripts/run_affiliations_ner.py
 import sys
 from pathlib import Path
 import pandas as pd
 
-# Add project src/ to path
 sys.path.append(str((Path(__file__).parent.parent / "src").resolve()))
 
 from models.ner.ner_extractor import NERExtractor
 from models.ner.token_processor import TokenProcessor
 
 
-def process_csv_and_write_tokens(csv_path: str, model_type: str = "spacy", model_name: str = "en_core_web_trf"):
+def process_csv_and_write_tokens(
+    csv_path: str,
+    model_type: str = "spacy",
+    model_name: str = "en_core_web_trf",
+    backoff_model: str = "dslim/bert-base-NER",
+    affiliation_column: str = "affil1",
+    id_column: str = "id1",
+    batch_size: int = 100,
+    entity_types=None,
+):
     csv_path = Path(csv_path).resolve()
 
-    # Load original CSV
     print(f"Loading data from {csv_path}...")
     df = pd.read_csv(csv_path)
     print("Dataset info:")
     print(f"  Shape: {df.shape}")
     print(f"  Columns: {df.columns.tolist()}")
-    print(f"  Sample affiliation: {df['affil1'].iloc[0] if len(df) > 0 else 'None'}")
+    sample = df[affiliation_column].iloc[0] if len(df) > 0 and affiliation_column in df.columns else "None"
+    print(f"  Sample affiliation: {sample}")
 
-    # Init extractor
-    # primary: spaCy xx_ent_wiki_sm (fast)
-    # backoff: dslim/bert-base-NER (only when spaCy finds 0 entities)
     extractor = NERExtractor(
-        model_type="spacy",
-        model_name="en_core_web_trf",
-        transformers_backoff_model="dslim/bert-base-NER",
+        model_type=model_type,
+        model_name=model_name,
+        transformers_backoff_model=backoff_model,
     )
 
-    # Run NER
     results = extractor.process_affiliations_dataset(
         data=df,
-        affiliation_column="affil1",
-        id_column="id1",         # column already exists per your header
-        batch_size=100,
-        entity_types=None,       # all entity types
+        affiliation_column=affiliation_column,
+        id_column=id_column,
+        batch_size=batch_size,
+        entity_types=entity_types,
     )
 
-    # Build tokens DataFrame (both labeled + plain) and merge into original
-    tokens_df = TokenProcessor.results_to_tokens_df(results, id_column="id1")
-    merged = TokenProcessor.merge_tokens_into_original_csv(df, tokens_df, id_column="id1")
+    tokens_df = TokenProcessor.results_to_tokens_df(results, id_column=id_column)
+    # Keep only the labeled tokens column
+    tokens_df = tokens_df.drop(columns=["affil_tokens"], errors="ignore")
 
-    # Output path: same folder as input, with suffix
+    merged = TokenProcessor.merge_tokens_into_original_csv(df, tokens_df, id_column=id_column)
+
     output_path = csv_path.with_name(csv_path.stem + "_with_tokens.csv")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-
     merged.to_csv(output_path, index=False, encoding="utf-8")
 
-    print(f"✅ Updated CSV written (with 'affil_tokens_labeled' and 'affil_tokens'): {output_path}")
+    print(f"Updated CSV written: {output_path}")
 
 
 if __name__ == "__main__":
