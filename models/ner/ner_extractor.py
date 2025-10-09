@@ -44,7 +44,7 @@ class NERExtractor:
             if self.model_type == "spacy":
                 self.load_spacy_model()
             elif self.model_type == "transformers":
-                self.load_transformer_model(self.model_name)  # primary is HF
+                self.load_backoff_model()  # primary is HF
             else:
                 raise ValueError(f"Unsupported model type: {self.model_type}")
             logger.info(f"Successfully loaded {self.model_type} model: {self.model_name}")
@@ -69,7 +69,7 @@ class NERExtractor:
         tok = AutoTokenizer.from_pretrained(self.transformers_backoff_model)
         mdl = AutoModelForTokenClassification.from_pretrained(self.transformers_backoff_model)
         self.backoff_pipeline = pipeline(
-            "ner",
+            "token-classification",
             model=mdl,
             tokenizer=tok,
             aggregation_strategy="simple",

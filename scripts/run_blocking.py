@@ -1,7 +1,7 @@
 """
-Learning/embedding-based blocking:
+Learning/embedding-based blocking (pure sklearn kNN):
 - TF-IDF embeddings
-- Top-K neighbors via ANN (HNSW if available, else exact cosine kNN)
+- Top-K neighbors via exact cosine kNN (brute-force)
 - Outputs candidate pairs and a mapped CSV with src_text and cand_text
 """
 from pathlib import Path
@@ -11,12 +11,6 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
-
-try:
-    import hnswlib
-    HNSW_AVAILABLE = True
-except Exception:
-    HNSW_AVAILABLE = False
 
 
 def detect_cols(df: pd.DataFrame) -> Tuple[str, str]:
@@ -51,33 +45,20 @@ def build_tfidf(
     return X, vec
 
 
-def ann_knn(X, k: int, backend: str = "auto", ef: int = 200, M: int = 32):
+def knn_indices(X, k: int):
     """
-    Find approximate/exact top-k neighbors.
-    Returns (indices, similarities, backend_used); each row includes self at [:, 0].
+    Exact cosine kNN using sklearn (brute-force).
+    Returns (indices, similarities); each row includes self at [:, 0].
     """
     N = X.shape[0]
     k_eff = max(0, min(k, N - 1))
+    n_neighbors = (k_eff + 1) if k_eff > 0 else 1
 
-    if backend == "auto":
-        backend = "hnsw" if HNSW_AVAILABLE and X.shape[1] <= 1000 else "sklearn"
-
-    if backend == "hnsw":
-        dense = X.astype(np.float32).toarray()
-        dim = dense.shape[1]
-        index = hnswlib.Index(space="cosine", dim=dim)
-        index.init_index(max_elements=N, ef_construction=ef, M=M)
-        index.add_items(dense, np.arange(N, dtype=np.int32))
-        index.set_ef(max(ef, k_eff * 2 if k_eff > 0 else 50))
-        labels, dists = index.knn_query(dense, k=(k_eff + 1) if k_eff > 0 else 1)
-        sims = 1.0 - dists
-        return labels, sims, "hnsw"
-
-    knn = NearestNeighbors(n_neighbors=(k_eff + 1) if k_eff > 0 else 1, metric="cosine", algorithm="brute")
-    knn.fit(X)
-    dists, idx = knn.kneighbors(X, return_distance=True)
+    nn = NearestNeighbors(n_neighbors=n_neighbors, metric="cosine", algorithm="brute")
+    nn.fit(X)
+    dists, idx = nn.kneighbors(X, return_distance=True)
     sims = 1.0 - dists
-    return idx, sims, "sklearn"
+    return idx, sims
 
 
 def build_candidates(
@@ -94,8 +75,7 @@ def build_candidates(
     N = len(ids)
     rows = []
     for i in range(N):
-        # exclude column 0 (self)
-        neighbors = neigh_idx[i, 1:]
+        neighbors = neigh_idx[i, 1:]      # skip self at [:,0]
         neigh_sims = sims[i, 1:]
         for j, s in zip(neighbors, neigh_sims):
             jj = int(j)
@@ -133,7 +113,6 @@ def run_blocking(
     out_csv: Optional[Path] = None,
     text_col: Optional[str] = None,
     id_col: Optional[str] = None,
-    backend: str = "auto",
     undirected: bool = False,
     min_sim: Optional[float] = None,
     ngram_min: int = 1,
@@ -141,10 +120,13 @@ def run_blocking(
     min_df: int = 2,
     max_df: float = 0.9,
 ) -> Path:
-    """Run TF-IDF + ANN blocking and write a mapped CSV of candidate pairs."""
+    """
+    Run TF-IDF + exact cosine kNN blocking and write a mapped CSV of candidate pairs.
+    """
     csv_path = Path(csv_path)
     df = pd.read_csv(csv_path)
 
+    # Auto-detect columns if needed
     if (not text_col or text_col not in df.columns) or (id_col and id_col not in df.columns):
         auto_text, auto_id = detect_cols(df)
         text_col = text_col if (text_col and text_col in df.columns) else auto_text
@@ -153,10 +135,12 @@ def run_blocking(
     texts = df[text_col].fillna("").astype(str).tolist()
     ids = df[id_col].tolist()
 
+    # TF-IDF + exact cosine kNN
     X, _ = build_tfidf(texts, ngram_min, ngram_max, min_df, max_df)
-    neigh_idx, sims, used_backend = ann_knn(X, k, backend=backend)
-    print(f"[info] ANN backend: {used_backend}; N={X.shape[0]}, k={k}")
+    neigh_idx, sims = knn_indices(X, k)
+    print(f"[info] backend=sklearn(brute); N={X.shape[0]}, k={k}")
 
+    # Build candidate pairs; keep top-k per src_id
     cand_df = build_candidates(ids, neigh_idx, sims, undirected=undirected, min_sim=min_sim)
     cand_df = (
         cand_df.sort_values(["src_id", "cosine_sim"], ascending=[True, False])
@@ -164,8 +148,8 @@ def run_blocking(
                .head(k)
     )
 
+    # Attach texts and save
     mapped = enrich_with_text(cand_df, df, id_col=id_col, text_col=text_col)
-
     out_csv = out_csv or (csv_path.parent / f"er_blocking_candidates_k{k}.csv")
     mapped.to_csv(out_csv, index=False)
     print(f"[saved] {out_csv} with {len(mapped):,} rows")
@@ -174,5 +158,5 @@ def run_blocking(
 
 if __name__ == "__main__":
     CSV = Path("../data/affiliationstrings_ids_with_tokens.csv")
-    K = 20
-    run_blocking(csv_path=CSV, k=K, backend="auto", undirected=False, min_sim=None)
+    K = 40
+    run_blocking(csv_path=CSV, k=K, undirected=False, min_sim=None)

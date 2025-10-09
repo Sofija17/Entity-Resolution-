@@ -114,8 +114,8 @@ if __name__ == "__main__":
     from src.classifier.constraints.geo_constraints import geo_mismatch_pairs_to_prune
     from src.common_methods import _id2text
 
-    edges = pd.read_csv("../data/classifier_predictions_xgb.csv")
-    entities = pd.read_csv("../data/affiliationstrings_ids.csv")
+    edges = pd.read_csv("../data/classifier_predictions/classifier_predictions_xgb.csv")
+    entities = pd.read_csv("../data/original/affiliationstrings_ids.csv")
 
     # If your GEO constraint needs id->text mapping:
     id2text = _id2text(entities, "id1", "affil1")

@@ -44,7 +44,7 @@ def process_csv_and_write_tokens(
 
     tokens_df = TokenProcessor.results_to_tokens_df(results, id_column=id_column)
     # Keep only the labeled tokens column
-    tokens_df = tokens_df.drop(columns=["affil_tokens"], errors="ignore")
+    # tokens_df = tokens_df.drop(columns=["affil_tokens"], errors="ignore")
 
     merged = TokenProcessor.merge_tokens_into_original_csv(df, tokens_df, id_column=id_column)
 
@@ -56,4 +56,4 @@ def process_csv_and_write_tokens(
 
 
 if __name__ == "__main__":
-    process_csv_and_write_tokens("../data/affiliationstrings_ids.csv")
+    process_csv_and_write_tokens("../data/original/affiliationstrings_ids.csv")

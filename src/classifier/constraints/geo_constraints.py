@@ -2,18 +2,14 @@ import re
 import pandas as pd
 from typing import Dict, Tuple, Set, Iterable, List, Optional, Callable
 
-# =================== 1) КОНФИГУРАЦИИ ===================
-
-# Земји што ги поддржуваме (според твојот сет + извадени од датасетот)
-ALLOWED_GEO_COUNTRIES_ONLY: Set[str] = {
+GEO_COUNTRIES_WHITE_LIST: Set[str] = {
     "United States", "United Kingdom", "Taiwan", "China", "United Arab Emirates",
     "Switzerland", "Greece", "Singapore", "Germany", "Hong Kong", "Canada",
     "Italy", "France", "Australia", "India", "Netherlands", "Israel",
     "Japan", "Brazil", "Denmark",
 }
 
-# Дел од ACRONYM_MAP_ORDERED што нормализира ВО ЗЕМЈИ (само тие правила ги користиме)
-# Заб.: откако ќе „одточкуваме“ (U.S.A. -> USA; U.S. -> US), овие патерни стануваат доволни.
+# transformations of acronyms -> full meaning
 ACRONYM_MAP_ORDERED: List[Tuple[str, str]] = [
     (r"\bUSA\b",                 "United States"),
     (r"\bUS\b",                  "United States"),
@@ -22,16 +18,13 @@ ACRONYM_MAP_ORDERED: List[Tuple[str, str]] = [
     (r"\bP\.?\s*R\.?\s*China\b", "China"),
     (r"\bPeople's Republic of China\b", "China"),
     (r"\bUAE\b",                 "United Arab Emirates"),
-    (r"\bCH\b",                  "Switzerland"),   # често како државен код/акроним
+    (r"\bCH\b",                  "Switzerland"),
     (r"\bGR(?=[\W_]|$)",         "Greece"),
     (r"\bS\'?pore(?=[\W_]|$)",   "Singapore"),
     (r"\bSingapor(?=[\W_]|$)",   "Singapore"),
     (r"\bHong\s*Kong\b", "Hong Kong"),
 ]
 
-# =================== 2) ПРЕТ-ЧЕКОР: ОДТОЧКУВАЊЕ ===================
-
-# Твојот шаблон: фаќа акроними со точки (U.S., U.S.A., E.U., и сл.)
 PATTERNDOTTED = re.compile(
     r"(?<![A-Za-z])[A-Z](?:\.[A-Z]){1,}.?(?=(?:\W||$))"
 )
@@ -46,13 +39,11 @@ def _undot_acronyms(text: str) -> str:
 
     def _repl(m: re.Match) -> str:
         token = m.group(0)
-        # тргни точки и празнини, на пр. "U. S. A." -> "USA", "U.S." -> "US"
         token = token.replace(".", "").replace(" ", "")
         return token
 
     return PATTERNDOTTED.sub(_repl, text)
 
-# =================== 3) НОРМАЛИЗАЦИЈА ДО ЗЕМЈИ ===================
 
 def _build_country_subs(acronym_map: Iterable[Tuple[str, str]], allowed: Set[str]) -> List[Tuple[re.Pattern, str]]:
     """Земи само правила што нормализираат во земји и компилирај ги (редоследно)."""
@@ -63,7 +54,7 @@ def _build_country_subs(acronym_map: Iterable[Tuple[str, str]], allowed: Set[str
     return subs
 
 def _make_text_normalizer(subs: List[Tuple[re.Pattern, str]]) -> Callable[[str], str]:
-    """Функција што ќе нормализира текст со дадените правила (после одточкување)."""
+    """Функција што ќе нормализира текст со дадените правила"""
     def _normalize(text: str) -> str:
         if not isinstance(text, str):
             return ""
@@ -72,8 +63,6 @@ def _make_text_normalizer(subs: List[Tuple[re.Pattern, str]]) -> Callable[[str],
             out = preg.sub(repl, out)
         return out
     return _normalize
-
-# =================== 4) ДЕТЕКЦИЈА НА ЗЕМЈИ ===================
 
 def _compile_country_patterns(countries: Set[str]) -> Dict[str, re.Pattern]:
     """
@@ -98,8 +87,6 @@ def _extract_countries_from_text(text: str, country_patterns: Dict[str, re.Patte
         out &= {c.lower() for c in restrict_to}
     return out
 
-# =================== 5) ГЛАВНА ФУНКЦИЈА ===================
-
 def geo_mismatch_pairs_to_prune(
     edges_df: pd.DataFrame,
     id2text: Dict[int, str],
@@ -110,12 +97,11 @@ def geo_mismatch_pairs_to_prune(
     Сече парови (src_id, cand_id) само ако:
       - по одточкување + нормализација двете страни имаат земја, и
       - земјите се различни (дисјунктни множества).
-    States/provinces/градови се игнорираат за prune (работиме САМО по земја).
     """
     # 0) Прет-чекор: изгради нормализатор за земји
-    subs = _build_country_subs(ACRONYM_MAP_ORDERED, ALLOWED_GEO_COUNTRIES_ONLY)
+    subs = _build_country_subs(ACRONYM_MAP_ORDERED, GEO_COUNTRIES_WHITE_LIST)
     normalizer = _make_text_normalizer(subs)
-    patterns = _compile_country_patterns(ALLOWED_GEO_COUNTRIES_ONLY)
+    patterns = _compile_country_patterns(GEO_COUNTRIES_WHITE_LIST)
     rset = {c.lower().strip() for c in restrict_to_countries} if restrict_to_countries else None
 
     # 1) Итерација низ уникатни парови

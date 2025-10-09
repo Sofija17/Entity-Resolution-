@@ -5,29 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b56d3bef-3672-45ff-b42b-faa6adeec2a1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/scripts/make_candidate_pairs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/run_blocking.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_ids.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_ids_with_tokens.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_mapping.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/classifier_predictions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20_features.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20_features_labeled.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_ids.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/original/affiliationstrings_ids.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_mapping.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/original/affiliationstrings_mapping.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/classifier_predictions_xgb.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/classifier_predictions_xgb_dropped_geo.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb_dropped_geo.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/classifier_predictions_xgb_filtered.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb_filtered.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/blocking/er_blocking_candidates_k20.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20_features.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k20_features.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20_features_labeled.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k20_features_labeled.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers/threshold_picker.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/models/ner/ner_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/ner/ner_extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/ner/token_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/ner/token_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/make_candidates.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/apply_constraints.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/apply_constraints.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/apply_modularity_split.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/apply_transitivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/apply_transitivity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/evaluate_model.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/run_affiliations_ner.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_affiliations_ner.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/run_pipeline.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_blocking.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_blocking.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/train_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/train_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/visualize_blocking_k.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/visualize_predictions_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/visualize_predictions_graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/blocking_optional/blocking.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/pairwise_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/classifier/pairwise_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_0_7.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_full.gexf" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/er_graph_full.gexf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/visualize_er_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/visualize_er_graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/visualize_predictions_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_graph/run_graph_predictions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classifier/constraints/geo_constraints.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/classifier/constraints/geo_constraints.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classifier/dataset_labeling/dataset_labeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/classifier/dataset_labeling/dataset_labeling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classifier/pairwise_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/pairwise_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/feautre_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/feautre_extraction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_after_pruning.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_before_pruning.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_full.gexf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/visualize_er_graph.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,42 +69,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.apply_constraints.executor&quot;: &quot;Run&quot;,
-    &quot;Python.blocking.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dataset_labeling.executor&quot;: &quot;Run&quot;,
-    &quot;Python.feautre_extraction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.make_candidates.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ner_model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_affiliations_ner.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_blocking.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python.train_classifier.executor&quot;: &quot;Run&quot;,
-    &quot;Python.visualize_blocking_k.executor&quot;: &quot;Run&quot;,
-    &quot;Python.visualize_predictions_graph.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lenovo/PycharmProjects/Entity_Resolution_with_Knowledge_Graphs/data&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.apply_clustering_algorithm.executor": "Run",
+    "Python.apply_constraints.executor": "Run",
+    "Python.apply_transitivity.executor": "Run",
+    "Python.blocking.executor": "Run",
+    "Python.build_graph_from_predictions.executor": "Run",
+    "Python.dataset_labeling.executor": "Run",
+    "Python.feautre_extraction.executor": "Run",
+    "Python.make_candidates.executor": "Run",
+    "Python.ner_model.executor": "Run",
+    "Python.run_affiliations_ner.executor": "Run",
+    "Python.run_blocking.executor": "Run",
+    "Python.run_graph_predictions.executor": "Run",
+    "Python.run_graph_transitivity.executor": "Run",
+    "Python.run_graph_visualization.executor": "Run",
+    "Python.run_pipeline.executor": "Run",
+    "Python.train_classifier.executor": "Run",
+    "Python.visualize_blocking_k.executor": "Run",
+    "Python.visualize_predictions_graph.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/Lenovo/PycharmProjects/Entity_Resolution_with_Knowledge_Graphs/data",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data" />
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\src\blocking" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\scripts" />
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\src\classifier\constraints" />
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\src" />
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\src\utils" />
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\source" />
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\classifier_predictions" />
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\feature_extraction" />
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\blocking" />
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\clustering_algorithm" />
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\scripts\run_graph" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -127,7 +137,9 @@
       <workItem from="1758653048904" duration="4789000" />
       <workItem from="1758731339414" duration="4519000" />
       <workItem from="1759069804524" duration="15724000" />
-      <workItem from="1759215655492" duration="806000" />
+      <workItem from="1759215655492" duration="1469000" />
+      <workItem from="1759249685116" duration="8234000" />
+      <workItem from="1759327495296" duration="7810000" />
     </task>
     <servers />
   </component>
@@ -135,17 +147,23 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_graph_predictions.coverage" NAME="run_graph_predictions Coverage Results" MODIFIED="1759262670035" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts/run_graph" />
     <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$apply_constraints.coverage" NAME="apply_constraints Coverage Results" MODIFIED="1759172016731" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$ner_model.coverage" NAME="ner_model Coverage Results" MODIFIED="1758125453520" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models/NER" />
-    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$visualize_blocking_k.coverage" NAME="visualize_blocking_k Coverage Results" MODIFIED="1758659725970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/blocking" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_graph_transitivity.coverage" NAME="run_graph_transitivity Coverage Results" MODIFIED="1759328346785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts/run_graph" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$visualize_blocking_k.coverage" NAME="visualize_blocking_k Coverage Results" MODIFIED="1759334951332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/blocking" />
     <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$make_candidates.coverage" NAME="make_candidates Coverage Results" MODIFIED="1758134402834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
-    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$train_classifier.coverage" NAME="train_classifier Coverage Results" MODIFIED="1758740043229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$train_classifier.coverage" NAME="train_classifier Coverage Results" MODIFIED="1759333456182" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_pipeline.coverage" NAME="run_pipeline Coverage Results" MODIFIED="1758125099135" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$apply_clustering_algorithm.coverage" NAME="apply_clustering_algorithm Coverage Results" MODIFIED="1759263388131" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$blocking.coverage" NAME="blocking Coverage Results" MODIFIED="1758220782938" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/blocking_optional" />
-    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$dataset_labeling.coverage" NAME="dataset_labeling Coverage Results" MODIFIED="1758739992591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/classifier/dataset_labeling" />
-    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_blocking.coverage" NAME="run_blocking Coverage Results" MODIFIED="1758659653989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$build_graph_from_predictions.coverage" NAME="build_graph_from_predictions Coverage Results" MODIFIED="1759335433909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/graph" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$apply_transitivity.coverage" NAME="apply_transitivity Coverage Results" MODIFIED="1759261380567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_graph_visualization.coverage" NAME="run_graph_visualization Coverage Results" MODIFIED="1759261743788" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$dataset_labeling.coverage" NAME="dataset_labeling Coverage Results" MODIFIED="1759333345783" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/classifier/dataset_labeling" />
     <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$visualize_predictions_graph.coverage" NAME="visualize_predictions_graph Coverage Results" MODIFIED="1759084413701" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
-    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$feautre_extraction.coverage" NAME="feautre_extraction Coverage Results" MODIFIED="1758739907994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/features" />
-    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_affiliations_ner.coverage" NAME="run_affiliations_ner Coverage Results" MODIFIED="1758658729356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_blocking.coverage" NAME="run_blocking Coverage Results" MODIFIED="1759331354296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$feautre_extraction.coverage" NAME="feautre_extraction Coverage Results" MODIFIED="1759332616585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/features" />
+    <SUITE FILE_PATH="coverage/Entity_Resolution_with_Knowledge_Graphs$run_affiliations_ner.coverage" NAME="run_affiliations_ner Coverage Results" MODIFIED="1759330264897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
   </component>
 </project>
