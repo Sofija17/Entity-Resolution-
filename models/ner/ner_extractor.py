@@ -1,10 +1,8 @@
-import logging
-from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
-
 import pandas as pd
 import spacy
-
+from dataclasses import dataclass
+from typing import List, Dict, Any, Optional
+import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -16,35 +14,44 @@ class ExtractedEntity:
     end: int
     confidence: Optional[float] = None
 
-
+# Using a NER model to extract entities from an entry
 class NERExtractor:
-    """
-    Named Entity Recognition екстрактор со:
-      - главен модел: spaCy (en_core_web_trf)
-      - backoff модел: HF transformers (dslim/bert-base-NER), се користи само кога примарниот модел резултира со 0 ентитети при екстракција на исти
-    """
-
-    def __init__(
-        self,
-        model_type: str = "spacy",
-        model_name: str = "en_core_web_trf",
-        transformers_backoff_model: Optional[str] = "dslim/bert-base-NER",
-    ):
+    # Initializing main Spacy transformer model, as well as a backup bert-based NER model
+    def __init__(self, model_type: str = "spacy", model_name: str = "en_core_web_trf",
+                 transformers_backoff_model: Optional[str] = "dslim/bert-base-NER",):
         self.model_type = model_type
         self.model_name = model_name
         self.model = None
-        self.tokenizer = None
-        self.ner_pipeline = None
         self.backoff_pipeline = None
         self.transformers_backoff_model = transformers_backoff_model
         self.load_model()
 
+    # Loading main Spacy transformer model
+    def load_spacy_model(self):
+        try:
+            self.model = spacy.load(self.model_name)
+        except OSError:
+            raise RuntimeError(f"spaCy model '{self.model_name}' not found.")
+
+    # Loading backoff bert-based NER model
+    def load_backoff_model(self):
+        if not self.transformers_backoff_model or self.backoff_pipeline is not None:
+            return
+        from transformers import pipeline
+        self.backoff_pipeline = pipeline(
+            task="token-classification",
+            model=self.transformers_backoff_model,
+            aggregation_strategy="simple",
+            device=-1,
+        )
+
+    # Loading defined models
     def load_model(self) -> None:
         try:
             if self.model_type == "spacy":
                 self.load_spacy_model()
             elif self.model_type == "transformers":
-                self.load_backoff_model()  # primary is HF
+                self.load_backoff_model()
             else:
                 raise ValueError(f"Unsupported model type: {self.model_type}")
             logger.info(f"Successfully loaded {self.model_type} model: {self.model_name}")
@@ -52,45 +59,7 @@ class NERExtractor:
             logger.error(f"Failed to load model {self.model_name}: {e}")
             raise
 
-    def load_spacy_model(self) -> None:
-        try:
-            self.model = spacy.load(self.model_name)
-        except OSError as e:
-            raise OSError(
-                f"spaCy model '{self.model_name}' not found. "
-                f"Install with: python -m spacy download {self.model_name}"
-            ) from e
-
-    def load_backoff_model(self) -> None:
-        if not self.transformers_backoff_model or self.backoff_pipeline is not None:
-            return
-        from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
-        logger.info(f"Loading backoff NER model: {self.transformers_backoff_model}")
-        tok = AutoTokenizer.from_pretrained(self.transformers_backoff_model)
-        mdl = AutoModelForTokenClassification.from_pretrained(self.transformers_backoff_model)
-        self.backoff_pipeline = pipeline(
-            "token-classification",
-            model=mdl,
-            tokenizer=tok,
-            aggregation_strategy="simple",
-            device=-1,
-        )
-
-    def extract_entities(self, text: str, entity_types: Optional[List[str]] = None) -> List[ExtractedEntity]:
-        if not text or not str(text).strip():
-            return []
-        # spaCy first (примарен)
-        try:
-            ents = self._extract_spacy_entities(text, entity_types)
-        except Exception as e:
-            logger.exception("spaCy extraction failed; will try backoff: %s", e)
-            ents = []
-        # HF fallback
-        if (not ents) and self.transformers_backoff_model:
-            self.load_backoff_model()
-            ents = self._extract_hf_pipeline(text, entity_types)
-        return ents
-
+    # Extract entities with Spacy model
     def _extract_spacy_entities(self, text: str, entity_types: Optional[List[str]]) -> List[ExtractedEntity]:
         doc = self.model(text)
         out: List[ExtractedEntity] = []
@@ -99,74 +68,75 @@ class NERExtractor:
                 out.append(ExtractedEntity(ent.text, ent.label_, ent.start_char, ent.end_char))
         return out
 
+    # Extract entities with bert-based Hugging Face NER
     def _extract_hf_pipeline(self, text: str, entity_types: Optional[List[str]]) -> List[ExtractedEntity]:
-        # Ensure lazy backoff pipeline is loaded
         if self.backoff_pipeline is None:
             self.load_backoff_model()
         pipe = self.backoff_pipeline
         if pipe is None:
-            raise RuntimeError("Backoff pipeline not initialized; check transformers_backoff_model.")
+            raise RuntimeError("Backoff pipeline not initialized.")
 
         results = pipe(text)
         out: List[ExtractedEntity] = []
-        for r in results:
-            lbl = r.get("entity_group") or r.get("entity")
-            if entity_types is None or lbl in entity_types:
-                out.append(
-                    ExtractedEntity(
-                        text=r.get("word", text[r["start"]:r["end"]]),
-                        label=lbl,
-                        start=r["start"],
-                        end=r["end"],
-                        confidence=r.get("score"),
-                    )
+        for result in results:
+            label = result.get("entity_group") or result.get("entity")
+            if entity_types is None or label in entity_types:
+                out.append(ExtractedEntity(text=result.get("word", text[result["start"]:result["end"]]),
+                        label=label, start=result["start"], end=result["end"], confidence=result.get("score"))
                 )
         return out
 
-    def process_affiliations_dataset(
-            self,
-            data: pd.DataFrame,
-            affiliation_column: str = "affil1",
-            id_column: str = "id1",
-            batch_size: int = 100,
-            entity_types: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
-        """
-        Извршување на NER врз affiliations датасет и враќање на листа од dictionaries:
-        {'id', 'affiliation', 'entities'}
-        """
+    # Calls on extract functions for Spacy or backoff Bert model
+    def extract_entities(self, text: str, entity_types: Optional[List[str]] = None) -> List[ExtractedEntity]:
+        if not text or not str(text).strip():
+            return []
+
+        # Try extracting entities using Spacy
+        try:
+            entities = self._extract_spacy_entities(text, entity_types)
+        except Exception as error:
+            logger.exception("Spacy extraction failed, attempting backoff model: %s", error)
+            entities = []
+
+        # If no entities found, use the backoff transformer model
+        if not entities and self.transformers_backoff_model:
+            self.load_backoff_model()
+            entities = self._extract_hf_pipeline(text, entity_types)
+        return entities
+
+    # Executing a NER model on the original dataset and returning a list of dictionaries of form:
+    # {'id', 'affiliation', 'entities'}
+    def process_dataset(self, data: pd.DataFrame, affiliation_column: str,
+                        id_column: str, batch_size: int, entity_types: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+
         results: List[Dict[str, Any]] = []
         affiliations = data[affiliation_column].fillna("").astype(str).tolist()
         ids = data[id_column].tolist() if id_column in data.columns else list(range(len(affiliations)))
 
-        logger.info(f"Processing {len(affiliations)} affiliations for entity extraction...")
+        logger.info(f"Processing {len(affiliations)} rows for entity extraction...")
         for i in range(0, len(affiliations), batch_size):
             batch_affiliations = affiliations[i: i + batch_size]
             batch_ids = ids[i: i + batch_size]
 
-            for rec_id, aff in zip(batch_ids, batch_affiliations):
+            for record_id, affiliation in zip(batch_ids, batch_affiliations):
                 try:
-                    ents = self.extract_entities(aff, entity_types)
-                    results.append(
-                        {
-                            "id": rec_id,
-                            "affiliation": aff,
-                            "entities": ents,
-                        }
-                    )
+                    ents = self.extract_entities(affiliation, entity_types)
+                    results.append({
+                        "id": record_id,
+                        "affiliation": affiliation,
+                        "entities": ents,
+                    })
                 except Exception as e:
-                    logger.warning(f"Error processing affiliation ID {rec_id}: {e}")
-                    results.append(
-                        {
-                            "id": rec_id,
-                            "affiliation": aff,
-                            "entities": [],
-                            "error": str(e),
-                        }
-                    )
+                    logger.warning(f"Error processing row id {record_id}: {e}")
+                    results.append({
+                        "id": record_id,
+                        "affiliation": affiliation,
+                        "entities": [],
+                        "error": str(e),
+                    })
 
             if (i + batch_size) % 1000 == 0:
-                logger.info(f"Processed {min(i + batch_size, len(affiliations))} affiliations...")
+                logger.info(f"Processed {min(i + batch_size, len(affiliations))} rows...")
 
-        logger.info(f"Affiliation entity extraction complete. Processed {len(results)} affiliations.")
+        logger.info(f"Entity extraction complete. Processed {len(results)} rows.")
         return results

@@ -157,6 +157,6 @@ def run_blocking(
 
 
 if __name__ == "__main__":
-    CSV = Path("../data/affiliationstrings_ids_with_tokens.csv")
+    CSV = Path("../data/tokenized_dataset/affiliationstrings_ids_with_tokens.csv")
     K = 40
     run_blocking(csv_path=CSV, k=K, undirected=False, min_sim=None)

@@ -1,9 +1,7 @@
 import sys
 from pathlib import Path
 import pandas as pd
-
 sys.path.append(str((Path(__file__).parent.parent / "src").resolve()))
-
 from models.ner.ner_extractor import NERExtractor
 from models.ner.token_processor import TokenProcessor
 
@@ -34,7 +32,7 @@ def process_csv_and_write_tokens(
         transformers_backoff_model=backoff_model,
     )
 
-    results = extractor.process_affiliations_dataset(
+    results = extractor.process_dataset(
         data=df,
         affiliation_column=affiliation_column,
         id_column=id_column,
@@ -43,9 +41,6 @@ def process_csv_and_write_tokens(
     )
 
     tokens_df = TokenProcessor.results_to_tokens_df(results, id_column=id_column)
-    # Keep only the labeled tokens column
-    # tokens_df = tokens_df.drop(columns=["affil_tokens"], errors="ignore")
-
     merged = TokenProcessor.merge_tokens_into_original_csv(df, tokens_df, id_column=id_column)
 
     output_path = csv_path.with_name(csv_path.stem + "_with_tokens.csv")

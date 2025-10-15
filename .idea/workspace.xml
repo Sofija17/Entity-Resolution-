@@ -6,32 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="b56d3bef-3672-45ff-b42b-faa6adeec2a1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_ids.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/original/affiliationstrings_ids.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_mapping.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/original/affiliationstrings_mapping.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/classifier_predictions_xgb.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/classifier_predictions_xgb_dropped_geo.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb_dropped_geo.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/classifier_predictions_xgb_filtered.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb_filtered.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/blocking/er_blocking_candidates_k20.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20_features.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k20_features.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/er_blocking_candidates_k20_features_labeled.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k20_features_labeled.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helpers/threshold_picker.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/affiliationstrings_ids_with_tokens.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/tokenized_dataset/affiliationstrings_ids_with_tokens.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/blocking/er_blocking_candidates_k20.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/classifier_predictions/classifier_predictions_xgb.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/clustering_algorithm/clusters_connected_components.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k20_features.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k20_features_labeled.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/original/affiliationstrings_ids_with_tokens.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/models/ner/ner_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/ner/ner_extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/apply_constraints.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/apply_constraints.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/apply_modularity_split.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/apply_transitivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/apply_transitivity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/evaluate_model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ner/token_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/ner/token_processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/make_candidate_pairs.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/make_candidate_pairs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/run_affiliations_ner.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_affiliations_ner.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/run_blocking.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_blocking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/train_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/train_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/visualize_predictions_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_graph/run_graph_predictions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/constraints/geo_constraints.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/classifier/constraints/geo_constraints.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/dataset_labeling/dataset_labeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/classifier/dataset_labeling/dataset_labeling.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/pairwise_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/pairwise_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/feautre_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/feautre_extraction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_after_pruning.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_before_pruning.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/er_graph_full.gexf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/visualize_er_graph.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,48 +55,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.apply_clustering_algorithm.executor": "Run",
-    "Python.apply_constraints.executor": "Run",
-    "Python.apply_transitivity.executor": "Run",
-    "Python.blocking.executor": "Run",
-    "Python.build_graph_from_predictions.executor": "Run",
-    "Python.dataset_labeling.executor": "Run",
-    "Python.feautre_extraction.executor": "Run",
-    "Python.make_candidates.executor": "Run",
-    "Python.ner_model.executor": "Run",
-    "Python.run_affiliations_ner.executor": "Run",
-    "Python.run_blocking.executor": "Run",
-    "Python.run_graph_predictions.executor": "Run",
-    "Python.run_graph_transitivity.executor": "Run",
-    "Python.run_graph_visualization.executor": "Run",
-    "Python.run_pipeline.executor": "Run",
-    "Python.train_classifier.executor": "Run",
-    "Python.visualize_blocking_k.executor": "Run",
-    "Python.visualize_predictions_graph.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Lenovo/PycharmProjects/Entity_Resolution_with_Knowledge_Graphs/data",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.apply_clustering_algorithm.executor&quot;: &quot;Run&quot;,
+    &quot;Python.apply_constraints.executor&quot;: &quot;Run&quot;,
+    &quot;Python.apply_transitivity.executor&quot;: &quot;Run&quot;,
+    &quot;Python.blocking.executor&quot;: &quot;Run&quot;,
+    &quot;Python.build_graph_from_predictions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dataset_labeling.executor&quot;: &quot;Run&quot;,
+    &quot;Python.feautre_extraction.executor&quot;: &quot;Run&quot;,
+    &quot;Python.make_candidates.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ner_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_affiliations_ner.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_blocking.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_graph_predictions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_graph_transitivity.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_graph_visualization.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train_classifier.executor&quot;: &quot;Run&quot;,
+    &quot;Python.visualize_blocking_k.executor&quot;: &quot;Run&quot;,
+    &quot;Python.visualize_predictions_graph.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lenovo/PycharmProjects/Entity_Resolution_with_Knowledge_Graphs/data&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data" />
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\src\blocking" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\tokenized_dataset" />
+      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\original" />
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\classifier_predictions" />
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\feature_extraction" />
       <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\blocking" />
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\data\clustering_algorithm" />
-      <recent name="C:\Users\Lenovo\PycharmProjects\Entity_Resolution_with_Knowledge_Graphs\scripts\run_graph" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -139,7 +125,8 @@
       <workItem from="1759069804524" duration="15724000" />
       <workItem from="1759215655492" duration="1469000" />
       <workItem from="1759249685116" duration="8234000" />
-      <workItem from="1759327495296" duration="7810000" />
+      <workItem from="1759327495296" duration="8166000" />
+      <workItem from="1760549100678" duration="4152000" />
     </task>
     <servers />
   </component>

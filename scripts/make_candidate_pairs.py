@@ -53,7 +53,7 @@ def build_candidates(
 
 if __name__ == "__main__":
     build_candidates(
-        "../data/affiliationstrings_ids_with_tokens.csv",
+        "../data/tokenized_dataset/affiliationstrings_ids_with_tokens.csv",
         "../data/processed/candidate_pairs.csv",
         k=20,
         min_sim=None,
