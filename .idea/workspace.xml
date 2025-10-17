@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b56d3bef-3672-45ff-b42b-faa6adeec2a1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/blocking/visualize_k_value_for_blocking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/blocking/er_blocking_candidates_k40.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k40_features.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/feature_extraction/er_blocking_candidates_k40_features_labeled.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/apply_constraints.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/apply_constraints.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/apply_transitivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/apply_transitivity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/run_blocking.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_blocking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/run_graph/run_graph_transitivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_graph/run_graph_transitivity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/src/graph/er_graph_trans.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/er_graph_trans.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/blocking/visualize_blocking_k.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/constraints/geo_constraints.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/constraints/geo_constraints.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/constraints/stopwords_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/constraints/stopwords_extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/constraints/token_overlap_constraint.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/constraints/token_overlap_constraint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classifier/dataset_labeling/dataset_labeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/labeling_extracted_features.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common_methods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/feautre_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/feautre_extraction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_affiliations_ner.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_NER_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/labeling_extracted_features.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/labeling_extracted_features.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +119,7 @@
       <workItem from="1760549100678" duration="4152000" />
       <workItem from="1760557359892" duration="2253000" />
       <workItem from="1760617459509" duration="10609000" />
-      <workItem from="1760698937687" duration="3072000" />
+      <workItem from="1760698937687" duration="3480000" />
     </task>
     <servers />
   </component>
