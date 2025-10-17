@@ -1,17 +1,21 @@
 import re
-from collections import Counter, defaultdict
-from itertools import combinations
-import numpy as np
 import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
+import unicodedata
+from typing import List
 
-_alnum = re.compile(r"[A-Za-z]+")
 
-def _tokenize(text: str) -> list[str]:
+TOKEN_RE = re.compile(r"[A-Za-z0-9]+")
+
+#Remove accent marks (é → e)
+def _strip_accents(s: str) -> str:
+    return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
+
+#normalize + lowercase + accent strip + extract alphanumeric tokens
+def tokenize(text: str) -> List[str]:
     if not isinstance(text, str):
-        return []
-    return _alnum.findall(text.lower())
+        text = "" if text is None else str(text)
+    text = _strip_accents(text.lower())
+    return TOKEN_RE.findall(text)
 
 
 def _id2text(

@@ -13,7 +13,7 @@ def main():
         G_small,
         title="Post-Transitivity (cluster wiring: chain)",
         with_labels=False,
-        out_path=Path("../src/graph/er_graph_trans.png"),
+        out_path=Path("../../src/graph/er_graph_trans.png"),
     )
     export_for_gephi(G, Path("../../src/graph/er_graph_trans_full.gexf"))
 
